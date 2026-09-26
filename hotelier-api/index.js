@@ -83,18 +83,57 @@ server.use('/uploads/room',express.static('uploads/room'));
 
 // });
 
-mongoose.connect(process.env.DB)
-    .then(() => {
-        console.log('Database connected');
-    })
-    .catch((error) => {
-        console.log(error);
-    });
+// mongoose.connect(process.env.DB)
+//     .then(() => {
+//         console.log('Database connected');
+//     })
+//     .catch((error) => {
+//         console.log(error);
+//     });
+
+// if (process.env.NODE_ENV !== 'production') {
+//     server.listen(process.env.PORT, () => {
+//         console.log(`Server running on port ${process.env.PORT}`);
+//     });
+// }
+
+// module.exports = server;
+
+
+const connectDB = async () => {
+    if (mongoose.connection.readyState === 1) {
+        return;
+    }
+
+    await mongoose.connect(process.env.DB);
+    console.log('Database connected');
+};
 
 if (process.env.NODE_ENV !== 'production') {
-    server.listen(process.env.PORT, () => {
-        console.log(`Server running on port ${process.env.PORT}`);
-    });
+    connectDB()
+        .then(() => {
+            server.listen(process.env.PORT, () => {
+                console.log(`Server running on port ${process.env.PORT}`);
+            });
+        })
+        .catch((error) => {
+            console.log(error);
+        });
 }
 
-module.exports = server;
+const handler = async (request, response) => {
+    try {
+        await connectDB();
+        server(request, response);
+    } catch (error) {
+        console.log('Database connection error:', error);
+
+        response.status(500).json({
+            _status: false,
+            _message: 'Database connection failed',
+            _data: null
+        });
+    }
+};
+
+module.exports = handler;
