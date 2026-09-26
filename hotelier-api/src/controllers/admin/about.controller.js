@@ -1,6 +1,28 @@
 const aboutModal = require('../../models/About');
 const cloudinary = require("../../../config/cloudinary");
 require('dotenv').config();
+const uploadToCloudinary = (file, folder) => {
+    return new Promise((resolve, reject) => {
+
+        const stream = cloudinary.uploader.upload_stream(
+            {
+                folder: folder
+            },
+            (error, result) => {
+
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+
+            }
+        );
+
+        stream.end(file.buffer);
+    });
+};
+
 
 // exports.create = async (request, response) => {
 //     try {
@@ -57,12 +79,10 @@ exports.create = async (request, response) => {
         let imageUrl = "";
 
         if (request.file) {
-            const result = await cloudinary.uploader.upload(
-                request.file.path,
-                {
-                    folder: "hotelier/about"
-                }
-            );
+          const result = await uploadToCloudinary(
+    request.file,
+    "hotelier/about"
+);
 
             imageUrl = result.secure_url;
         }
@@ -161,13 +181,10 @@ exports.update = async (request, response) => {
         // Upload new image to Cloudinary
         if (request.file) {
 
-            const result = await cloudinary.uploader.upload(
-                request.file.path,
-                {
-                    folder: "hotelier/about"
-                }
-            );
-
+           const result = await uploadToCloudinary(
+    request.file,
+    "hotelier/about"
+);
             setting.image = result.secure_url;
         }
 
