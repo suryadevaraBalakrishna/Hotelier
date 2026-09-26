@@ -2,6 +2,22 @@ const hotelModal = require('../../models/Hotel');
 const cloudinary = require("../../../config/cloudinary");
 require('dotenv').config();
 
+const uploadToCloudinary = (file, folder) => {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            { folder: folder },
+            (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            }
+        );
+
+        stream.end(file.buffer);
+    });
+};
 // exports.create = async (request, response) => {
 //     try {
 //          const data = request.body;
@@ -60,31 +76,27 @@ exports.create = async (request, response) => {
     try {
         const data = request.body;
 
-        // Upload main image to Cloudinary
+        // Upload main image
         if (request.files && request.files.image) {
 
-            const result = await cloudinary.uploader.upload(
-                request.files.image[0].path,
-                {
-                    folder: "hotelier/hotels"
-                }
+            const result = await uploadToCloudinary(
+                request.files.image[0],
+                "hotelier/hotels"
             );
 
             data.image = result.secure_url;
         }
 
-        // Upload multiple images to Cloudinary
+        // Upload multiple images
         if (request.files && request.files.images) {
 
             const imageUrls = [];
 
             for (const file of request.files.images) {
 
-                const result = await cloudinary.uploader.upload(
-                    file.path,
-                    {
-                        folder: "hotelier/hotels"
-                    }
+                const result = await uploadToCloudinary(
+                    file,
+                    "hotelier/hotels"
                 );
 
                 imageUrls.push(result.secure_url);
@@ -97,24 +109,22 @@ exports.create = async (request, response) => {
 
         const result = await hotel.save();
 
-        const output = {
+        response.send({
             _status: true,
             _message: "Record inserted successfully",
-            _data: result,
-        };
-
-        response.send(output);
+            _data: result
+        });
 
     } catch (error) {
 
-        const output = {
+        console.log("Hotel create error:", error);
+
+        response.status(500).send({
             _status: false,
             _message: "Something went wrong",
             _error: error.message,
-            _data: null,
-        };
-
-        response.send(output);
+            _data: null
+        });
     }
 };
 
@@ -230,11 +240,9 @@ exports.update = async (request, response) => {
         // Update main image
         if (request.files && request.files.image) {
 
-            const result = await cloudinary.uploader.upload(
-                request.files.image[0].path,
-                {
-                    folder: "hotelier/hotels"
-                }
+            const result = await uploadToCloudinary(
+                request.files.image[0],
+                "hotelier/hotels"
             );
 
             data.image = result.secure_url;
@@ -248,11 +256,9 @@ exports.update = async (request, response) => {
 
             for (const file of request.files.images) {
 
-                const result = await cloudinary.uploader.upload(
-                    file.path,
-                    {
-                        folder: "hotelier/hotels"
-                    }
+                const result = await uploadToCloudinary(
+                    file,
+                    "hotelier/hotels"
                 );
 
                 imageUrls.push(result.secure_url);
@@ -263,7 +269,9 @@ exports.update = async (request, response) => {
 
 
         const result = await hotelModal.updateOne(
-            { _id: request.params.id },
+            {
+                _id: request.params.id
+            },
             {
                 $set: data
             }
@@ -281,6 +289,8 @@ exports.update = async (request, response) => {
 
     } catch (error) {
 
+        console.log("Hotel update error:", error);
+
         const output = {
             _status: false,
             _message: "Something went wrong",
@@ -288,7 +298,7 @@ exports.update = async (request, response) => {
             _data: null
         };
 
-        response.send(output);
+        response.status(500).send(output);
     }
 };
 
