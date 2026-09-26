@@ -2,6 +2,28 @@ const roomModal = require("../../models/Room");
 const cloudinary = require("../../../config/cloudinary");
 require('dotenv').config();
 
+const uploadToCloudinary = (file, folder) => {
+    return new Promise((resolve, reject) => {
+
+        const stream = cloudinary.uploader.upload_stream(
+            {
+                folder: folder
+            },
+            (error, result) => {
+
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+
+            }
+        );
+
+        stream.end(file.buffer);
+    });
+};
+
 // exports.create = async (request, response) => {
 //     try {
 //         const data = request.body;
@@ -62,40 +84,35 @@ exports.create = async (request, response) => {
 
         const data = request.body;
 
+    // Upload main room image
+if (request.files && request.files.image) {
 
-        // Upload main room image
-        if (request.files && request.files.image) {
+    const result = await uploadToCloudinary(
+        request.files.image[0],
+        "hotelier/rooms"
+    );
 
-            const result = await cloudinary.uploader.upload(
-                request.files.image[0].path,
-                {
-                    folder: "hotelier/rooms"
-                }
-            );
-
-            data.image = result.secure_url;
-        }
+    data.image = result.secure_url;
+}
 
 
-        // Upload multiple room images
-        if (request.files && request.files.images) {
+// Upload multiple room images
+if (request.files && request.files.images) {
 
-            const imageUrls = [];
+    const imageUrls = [];
 
-            for (const file of request.files.images) {
+    for (const file of request.files.images) {
 
-                const result = await cloudinary.uploader.upload(
-                    file.path,
-                    {
-                        folder: "hotelier/rooms"
-                    }
-                );
+        const result = await uploadToCloudinary(
+            file,
+            "hotelier/rooms"
+        );
 
-                imageUrls.push(result.secure_url);
-            }
+        imageUrls.push(result.secure_url);
+    }
 
-            data.images = imageUrls;
-        }
+    data.images = imageUrls;
+}
 
 
         const room = new roomModal(data);
@@ -223,46 +240,34 @@ exports.update = async (request, response) => {
 
 
         // Update main room image
-        if (request.files && request.files.image) {
+if (request.files && request.files.image) {
 
-            const result = await cloudinary.uploader.upload(
-                request.files.image[0].path,
-                {
-                    folder: "hotelier/rooms"
-                }
-            );
+    const result = await uploadToCloudinary(
+        request.files.image[0],
+        "hotelier/rooms"
+    );
 
-            data.image = result.secure_url;
-        }
+    data.image = result.secure_url;
+}
 
 
-        // Update gallery images
-        if (request.files && request.files.images) {
+// Update gallery images
+if (request.files && request.files.images) {
 
-            const imageUrls = [];
+    const imageUrls = [];
 
-            for (const file of request.files.images) {
+    for (const file of request.files.images) {
 
-                const result = await cloudinary.uploader.upload(
-                    file.path,
-                    {
-                        folder: "hotelier/rooms"
-                    }
-                );
-
-                imageUrls.push(result.secure_url);
-            }
-
-            data.images = imageUrls;
-        }
-
-
-        const result = await roomModal.updateOne(
-            { _id: request.params.id },
-            {
-                $set: data
-            }
+        const result = await uploadToCloudinary(
+            file,
+            "hotelier/rooms"
         );
+
+        imageUrls.push(result.secure_url);
+    }
+
+    data.images = imageUrls;
+}
 
 
         const output = {
