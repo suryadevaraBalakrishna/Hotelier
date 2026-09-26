@@ -240,34 +240,45 @@ exports.update = async (request, response) => {
 
 
         // Update main room image
-if (request.files && request.files.image) {
+        if (request.files && request.files.image) {
 
-    const result = await uploadToCloudinary(
-        request.files.image[0],
-        "hotelier/rooms"
-    );
+            const result = await uploadToCloudinary(
+                request.files.image[0],
+                "hotelier/rooms"
+            );
 
-    data.image = result.secure_url;
-}
+            data.image = result.secure_url;
+        }
 
 
-// Update gallery images
-if (request.files && request.files.images) {
+        // Update gallery images
+        if (request.files && request.files.images) {
 
-    const imageUrls = [];
+            const imageUrls = [];
 
-    for (const file of request.files.images) {
+            for (const file of request.files.images) {
 
-        const result = await uploadToCloudinary(
-            file,
-            "hotelier/rooms"
+                const result = await uploadToCloudinary(
+                    file,
+                    "hotelier/rooms"
+                );
+
+                imageUrls.push(result.secure_url);
+            }
+
+            data.images = imageUrls;
+        }
+
+
+        // Update room in MongoDB
+        const result = await roomModal.updateOne(
+            {
+                _id: request.params.id
+            },
+            {
+                $set: data
+            }
         );
-
-        imageUrls.push(result.secure_url);
-    }
-
-    data.images = imageUrls;
-}
 
 
         const output = {
@@ -281,6 +292,8 @@ if (request.files && request.files.images) {
 
     } catch (error) {
 
+        console.log("Room update error:", error);
+
         const output = {
             _status: false,
             _message: "Something went wrong",
@@ -288,7 +301,7 @@ if (request.files && request.files.images) {
             _data: null
         };
 
-        response.send(output);
+        response.status(500).send(output);
     }
 };
 
