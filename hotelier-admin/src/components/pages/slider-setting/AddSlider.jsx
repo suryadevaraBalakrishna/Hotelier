@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import e from 'cors'
+
 
 export default function AddSlider() {
   let [viewSlider,setviewSlider]=useState([])
