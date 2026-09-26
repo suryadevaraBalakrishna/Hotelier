@@ -1,6 +1,28 @@
 const settingModal = require("../../models/Setting");
 const cloudinary = require("../../../config/cloudinary");
 require('dotenv').config();
+const uploadToCloudinary = (file, folder) => {
+    return new Promise((resolve, reject) => {
+
+        const stream = cloudinary.uploader.upload_stream(
+            {
+                folder: folder
+            },
+            (error, result) => {
+
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+
+            }
+        );
+
+        stream.end(file.buffer);
+    });
+};
+
 
 
 // exports.create=async(request,response)=>{
@@ -59,12 +81,10 @@ exports.create = async (request, response) => {
 
         if (request.file) {
 
-            const result = await cloudinary.uploader.upload(
-                request.file.path,
-                {
-                    folder: "hotelier/settings"
-                }
-            );
+           const result = await uploadToCloudinary(
+    request.file,
+    "hotelier/settings"
+);
 
             logoUrl = result.secure_url;
         }
@@ -201,18 +221,17 @@ exports.update = async (request, response) => {
         setting.social_links = JSON.parse(request.body.social_links);
 
 
-        // Upload new logo to Cloudinary
-        if (request.file) {
+      
+    // Upload new logo to Cloudinary
+if (request.file) {
 
-            const result = await cloudinary.uploader.upload(
-                request.file.path,
-                {
-                    folder: "hotelier/settings"
-                }
-            );
+    const result = await uploadToCloudinary(
+        request.file,
+        "hotelier/settings"
+    );
 
-            setting.logo = result.secure_url;
-        }
+    setting.logo = result.secure_url;
+}
 
 
         await setting.save();
