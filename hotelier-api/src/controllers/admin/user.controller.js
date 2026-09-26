@@ -7,6 +7,27 @@ const nodemailer = require('nodemailer');
 const { request } = require('express');
 const cloudinary = require("../../../config/cloudinary");
 
+const uploadToCloudinary = (file, folder) => {
+    return new Promise((resolve, reject) => {
+
+        const stream = cloudinary.uploader.upload_stream(
+            {
+                folder: folder
+            },
+            (error, result) => {
+
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+
+            }
+        );
+
+        stream.end(file.buffer);
+    });
+};
 
 exports.register = async (request, response) => {
 
@@ -34,16 +55,18 @@ exports.register = async (request, response) => {
     //     data.image=request.file.filename;
     // }
 
+  
     if (request.file) {
 
-    const result = await cloudinary.uploader.upload(
-        request.file.path,
-        {
-            folder: "hotelier/users"
-        }
+    const result = await uploadToCloudinary(
+        request.file,
+        "hotelier/users"
     );
 
     data.image = result.secure_url;
+
+
+  
 }
 
      try {
@@ -269,16 +292,15 @@ exports.UpdateProfile = async (request, response) => {
         //     updateData.image=request.file.filename;
         // }
 
-        if (request.file) {
+      if (request.file) {
 
-    const result = await cloudinary.uploader.upload(
-        request.file.path,
-        {
-            folder: "hotelier/users"
-        }
+    const result = await uploadToCloudinary(
+        request.file,
+        "hotelier/users"
     );
 
     updateData.image = result.secure_url;
+
 }
 
         var updatedUser=await userModal.updateOne({_id:decoded.userData._id},{$set:updateData})

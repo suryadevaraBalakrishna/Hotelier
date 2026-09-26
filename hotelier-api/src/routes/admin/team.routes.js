@@ -1,21 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const { create, view, update,details,destroy } = require('../../controllers/admin/team.controller');
-const path = require('path');
+
+const {
+    create,
+    view,
+    update,
+    details,
+    destroy
+} = require('../../controllers/admin/team.controller');
 
 module.exports = server => {
 
-    const storage = multer.diskStorage({
-        destination: function (request, file, callback) {
-            callback(null, 'uploads/team');
-        },
-        filename: function (request, file, callback) {
-            callback(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
-        }
-    })
+    const storage = multer.memoryStorage();
 
-    const upload = multer({ storage: storage });
+    const upload = multer({
+        storage: storage
+    });
 
     router.post('/create', upload.single('image'), create);
     router.post('/view', upload.none(), view);
@@ -24,8 +25,4 @@ module.exports = server => {
     router.post('/destroy', upload.none(), destroy);
 
     server.use('/api/admin/team', router);
-}
-
-
-
-
+};

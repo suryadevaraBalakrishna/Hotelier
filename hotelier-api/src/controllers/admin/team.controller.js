@@ -1,6 +1,28 @@
 const teamModal = require('../../models/Team');
 const cloudinary = require("../../../config/cloudinary");
 require('dotenv').config();
+const uploadToCloudinary = (file, folder) => {
+    return new Promise((resolve, reject) => {
+
+        const stream = cloudinary.uploader.upload_stream(
+            {
+                folder: folder
+            },
+            (error, result) => {
+
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+
+            }
+        );
+
+        stream.end(file.buffer);
+    });
+};
+
 
 // exports.create = async (request, response) => {
 //     try {
@@ -54,12 +76,12 @@ exports.create = async (request, response) => {
 
         if (request.file) {
 
-            const result = await cloudinary.uploader.upload(
-                request.file.path,
-                {
-                    folder: "hotelier/team"
-                }
-            );
+           const result = await cloudinary.uploader.upload(
+    request.file.path,
+    {
+        folder: "hotelier/team"
+    }
+);
 
             imageUrl = result.secure_url;
         }
@@ -191,12 +213,10 @@ exports.update = async (request, response) => {
 
         if (request.file) {
 
-            const result = await cloudinary.uploader.upload(
-                request.file.path,
-                {
-                    folder: "hotelier/team"
-                }
-            );
+         const result = await uploadToCloudinary(
+    request.file,
+    "hotelier/team"
+);
 
             data.image = result.secure_url;
         }
