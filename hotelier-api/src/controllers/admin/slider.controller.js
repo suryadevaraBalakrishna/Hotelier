@@ -1,5 +1,25 @@
 const sliderModal = require("../../models/Slider");
 const cloudinary = require("../../../config/cloudinary");
+const uploadToCloudinary = (file, folder) => {
+    return new Promise((resolve, reject) => {
+
+        const stream = cloudinary.uploader.upload_stream(
+            {
+                folder: folder
+            },
+            (error, result) => {
+
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            }
+        );
+
+        stream.end(file.buffer);
+    });
+};
 
 
 // exports.create = async (request, response) => {
@@ -58,12 +78,10 @@ exports.create = async (request, response) => {
 
         if (request.file) {
 
-            const result = await cloudinary.uploader.upload(
-                request.file.path,
-                {
-                    folder: "hotelier/sliders"
-                }
-            );
+          const result = await uploadToCloudinary(
+    request.file,
+    "hotelier/sliders"
+);
 
             imageUrl = result.secure_url;
         }
@@ -207,12 +225,10 @@ exports.update = async (request, response) => {
 
         if (request.file) {
 
-            const result = await cloudinary.uploader.upload(
-                request.file.path,
-                {
-                    folder: "hotelier/sliders"
-                }
-            );
+           const result = await uploadToCloudinary(
+    request.file,
+    "hotelier/sliders"
+);
 
             data.image = result.secure_url;
         }
