@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 
 export default function WebsiteSetting() {
    let [setting,setsetting]=useState()
-   let [logopath,setlogopath]=useState()
+  
    let [update,setupdate]=useState(false)
 
     useEffect(()=>{
@@ -13,7 +13,6 @@ export default function WebsiteSetting() {
      .then((result)=>{
         if(result.data._status==true){
             setsetting(result.data._data)
-            setlogopath(result.data._setting_image_path)
             // console.log(result.data._data)
         }else{
             setsetting()
@@ -187,7 +186,7 @@ export default function WebsiteSetting() {
                                 className="form-control"
                             />
                             {setting?.logo &&(
-                                <img src={logopath+setting.logo} alt="Current Logo" className="mt-3" style={{ maxWidth: '150px' }} />
+                                <img src={setting.logo} alt="Current Logo" className="mt-3" style={{ maxWidth: '150px' }} />
                             )}
                          
                         </div>

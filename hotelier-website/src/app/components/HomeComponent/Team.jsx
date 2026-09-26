@@ -5,8 +5,7 @@ import React, { useEffect, useState } from 'react';
 
 export default function Team() {
   const [team, setTeam] = useState([]);
-  const [imagePath, setImagePath] = useState('');
-
+ 
   useEffect(() => {
     axios
       .post(
@@ -16,10 +15,10 @@ export default function Team() {
       .then((result) => {
         if (result.data._status === true) {
           setTeam(result.data._data);
-          setImagePath(result.data._team_setting_image_path);
+      
         } else {
           setTeam([]);
-          setImagePath('');
+          
         }
       })
       .catch((error) => {
@@ -61,7 +60,7 @@ export default function Team() {
                 <div className="position-relative">
                   <img
                     className="img-fluid"
-                    src={`${imagePath}/${item.image}`}
+                    src={`${item.image}`}
                     alt={item.name}
                   />
                 </div>

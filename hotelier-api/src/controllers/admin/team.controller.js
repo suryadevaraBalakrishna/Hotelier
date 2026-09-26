@@ -1,50 +1,96 @@
 const teamModal = require('../../models/Team');
+const cloudinary = require("../../../config/cloudinary");
 require('dotenv').config();
+
+// exports.create = async (request, response) => {
+//     try {
+//         const data = {
+//             name: request.body.name,
+//             designation: request.body.designation,
+//             image: request.file.filename,
+//         }
+
+//         const team = new teamModal(data)
+//         await team.save()
+//             .then((result) => {
+//                 const output = {
+//                     _status: true,
+//                     _message: "Record inserted successfully",
+//                     _data: result,
+//                 }
+
+//                 response.send(output);
+
+//             }).catch((error) => {
+//                 var errorMessage = [];
+//                 for (err in error.errors) {
+//                     errorMessage.push(error.errors[err].message);
+//                 }
+//                 const output = {
+//                     _status: false,
+//                     _message: "Record not inserted",
+//                     _error: errorMessage,
+//                     _data: null,
+//                 }
+//                 response.send(output);
+//             })
+
+//     } catch (error) {
+//         const output = {
+//             _status: false,
+//             _message: "Something went wrong",
+//             _error: error.message,
+//             _data: null,
+//         }
+
+//         response.send(output);
+//     }
+// }
 
 exports.create = async (request, response) => {
     try {
+
+        let imageUrl = "";
+
+        if (request.file) {
+
+            const result = await cloudinary.uploader.upload(
+                request.file.path,
+                {
+                    folder: "hotelier/team"
+                }
+            );
+
+            imageUrl = result.secure_url;
+        }
+
         const data = {
             name: request.body.name,
             designation: request.body.designation,
-            image: request.file.filename,
-        }
+            image: imageUrl
+        };
 
-        const team = new teamModal(data)
-        await team.save()
-            .then((result) => {
-                const output = {
-                    _status: true,
-                    _message: "Record inserted successfully",
-                    _data: result,
-                }
+        const team = new teamModal(data);
 
-                response.send(output);
+        const result = await team.save();
 
-            }).catch((error) => {
-                var errorMessage = [];
-                for (err in error.errors) {
-                    errorMessage.push(error.errors[err].message);
-                }
-                const output = {
-                    _status: false,
-                    _message: "Record not inserted",
-                    _error: errorMessage,
-                    _data: null,
-                }
-                response.send(output);
-            })
+        response.send({
+            _status: true,
+            _message: "Record inserted successfully",
+            _data: result
+        });
 
     } catch (error) {
-        const output = {
+
+        response.send({
             _status: false,
             _message: "Something went wrong",
             _error: error.message,
-            _data: null,
-        }
-
-        response.send(output);
+            _data: null
+        });
     }
-}
+};
+
 
 
 exports.view= async(request,response)=>{
@@ -82,56 +128,106 @@ exports.view= async(request,response)=>{
 }
 
 
-exports.update=async(request,response)=>{
-   try{
-        const data={
-        name: request.body.name,
-            designation: request.body.designation,
+// exports.update=async(request,response)=>{
+//    try{
+//         const data={
+//         name: request.body.name,
+//             designation: request.body.designation,
           
-        }
+//         }
 
-        if(request.file){
-            data.image=request.file.filename;
-        }
+//         if(request.file){
+//             data.image=request.file.filename;
+//         }
 
-        await teamModal.updateOne({
-            _id: request.params.id
-        },{
-            $set: data
-        })
+//         await teamModal.updateOne({
+//             _id: request.params.id
+//         },{
+//             $set: data
+//         })
         
-            .then((result) => {
-                const output = {
-                    _status: true,
-                    _message: 'Record Updated',
-                    _data: result
-                }
+//             .then((result) => {
+//                 const output = {
+//                     _status: true,
+//                     _message: 'Record Updated',
+//                     _data: result
+//                 }
 
-                response.send(output);
-            })
-            .catch((error) => {
-                const output = {
-                    _status: false,
-                    _message: 'Record not Updated',
-                    _error: error.message,
-                    _data: null
-                }
-                response.send(output);
-            })
+//                 response.send(output);
+//             })
+//             .catch((error) => {
+//                 const output = {
+//                     _status: false,
+//                     _message: 'Record not Updated',
+//                     _error: error.message,
+//                     _data: null
+//                 }
+//                 response.send(output);
+//             })
 
-   }
-   catch (error) {
-        const output = {
+//    }
+//    catch (error) {
+//         const output = {
+//             _status: false,
+//             _message: "Something went wrong",
+//             _error: error.message,
+//             _data: null,
+//         }
+
+//         response.send(output);
+//     }
+
+// }
+
+
+exports.update = async (request, response) => {
+    try {
+
+        const data = {
+            name: request.body.name,
+            designation: request.body.designation
+        };
+
+
+        if (request.file) {
+
+            const result = await cloudinary.uploader.upload(
+                request.file.path,
+                {
+                    folder: "hotelier/team"
+                }
+            );
+
+            data.image = result.secure_url;
+        }
+
+
+        const result = await teamModal.updateOne(
+            {
+                _id: request.params.id
+            },
+            {
+                $set: data
+            }
+        );
+
+
+        response.send({
+            _status: true,
+            _message: "Record Updated",
+            _data: result
+        });
+
+    } catch (error) {
+
+        response.send({
             _status: false,
             _message: "Something went wrong",
             _error: error.message,
-            _data: null,
-        }
-
-        response.send(output);
+            _data: null
+        });
     }
-
-}
+};
 
 exports.details = async (request, response) => {
     try {

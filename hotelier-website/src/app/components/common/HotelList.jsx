@@ -8,8 +8,7 @@ import { useSearchParams } from 'next/navigation';
 export default function HotelList({ limit }) {
 
     let [hotels, setHotels] = useState([])
-    let [images, setImages] = useState([])
-
+   
     const searchParams = useSearchParams();
     const search = searchParams.get('location');
     const city = search?.split(",")[0].trim();
@@ -29,7 +28,7 @@ export default function HotelList({ limit }) {
                         hotelData = hotelData.slice(0, limit);
                     }
                     setHotels(hotelData);
-                    setImages(result.data._hotel_setting_image_path);
+                    
                 } else {
                     console.log(result.data._message)
                 }
@@ -53,7 +52,7 @@ export default function HotelList({ limit }) {
                             <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s" key={index}>
                                 <div className="room-item shadow rounded overflow-hidden">
                                     <div className="position-relative">
-                                        <img className="img-fluid" src={images + hotel.image} alt="" />
+                                        <img className="img-fluid" src={hotel.image} alt="" />
                                     </div>
                                     <div className="p-4 mt-2">
                                         <div className="d-flex justify-content-between mb-3">

@@ -4,6 +4,7 @@ var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 const saltRounds=10;
 const nodemailer = require('nodemailer');
+const cloudinary = require("../../../config/cloudinary");
 
 
 exports.register = async (request, response) => {
@@ -28,9 +29,21 @@ exports.register = async (request, response) => {
         role_type:'User',
     }
 
-    if(request.file){
-        data.image=request.file.filename;
-    }
+    // if(request.file){
+    //     data.image=request.file.filename;
+    // }
+
+    if (request.file) {
+
+    const result = await cloudinary.uploader.upload(
+        request.file.path,
+        {
+            folder: "hotelier/users"
+        }
+    );
+
+    data.image = result.secure_url;
+}
 
      try {
 
@@ -215,9 +228,21 @@ exports.UpdateProfile = async (request, response) => {
             mobile_number:request.body.mobile_number,
         }
 
-        if(request.file){
-            updateData.image=request.file.filename;
+        // if(request.file){
+        //     updateData.image=request.file.filename;
+        // }
+
+        if (request.file) {
+
+    const result = await cloudinary.uploader.upload(
+        request.file.path,
+        {
+            folder: "hotelier/users"
         }
+    );
+
+    updateData.image = result.secure_url;
+}
 
         var updatedUser=await userModal.updateOne({_id:decoded.userData._id},{$set:updateData})
         .then((result) =>{

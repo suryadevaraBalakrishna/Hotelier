@@ -12,7 +12,7 @@ export default function EditSlider() {
  let navigate=useNavigate();
 
  let [viewSlider,setviewSlider]=useState([])
- let [sliderImage,setsliderImage]=useState()
+
 
 
  useEffect(()=>{
@@ -21,11 +21,10 @@ export default function EditSlider() {
       if(result.data._status==true){
          setviewSlider(result.data._data);
          console.log(result.data._data);
-         setsliderImage(result.data._slider_image_path);
-         console.log(result.data);
+       
       }else{
          setviewSlider()
-         setsliderImage()
+        
       }
    }).catch((error)=>{
       console.log(error)
@@ -85,7 +84,7 @@ let handleSubmit=(event)=>{
                   <div className="mb-3"><label className="form-label">Button Link</label><input className="form-control" placeholder="Enter button link" type="text" name="button_link" defaultValue={viewSlider.button_link}/></div>
                   <div className="mb-3"><label className="form-label">Button Text Two</label><input className="form-control" placeholder="Enter button text" type="text" name="button_txt_two" defaultValue={viewSlider.second_btn_txt}/></div>
                   <div className="mb-3"><label className="form-label">Button Link Two</label><input className="form-control" placeholder="Enter button link" type="text" name="button_link_two" defaultValue={viewSlider.second_btn_link}/></div>
-                  <div className="mb-3"><label className="form-label">Slider Image</label><input className="form-control" type="file" name="image"/><img className="img-fluid" src={sliderImage+viewSlider.image} alt="Slider Image"/></div>
+                  <div className="mb-3"><label className="form-label">Slider Image</label><input className="form-control" type="file" name="image"/><img className="img-fluid" src={viewSlider.image} alt="Slider Image"/></div>
                   <div className="text-end"><button type="submit" className="btn btn-success">Update Slider</button></div>
                </form>
             </div>

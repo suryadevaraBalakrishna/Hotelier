@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 export default function AddTeam() {
 
     let [Team,setTeam]=useState([]);
-    let [imagePath,setimagePath]=useState();
+   
       const [createStatus, setcreateStatus] = useState(false);
        const [deleteStatus, setdeleteStatus] = useState(false);
 
@@ -16,10 +16,10 @@ export default function AddTeam() {
       .then((result)=>{
           if(result.data._status==true){
              setTeam(result.data._data);
-             setimagePath(result.data._team_setting_image_path);
+           
           }else{
              setTeam([]);
-             setimagePath();
+           
           }
       }).catch((error)=>{
         console.log(error);
@@ -140,7 +140,7 @@ export default function AddTeam() {
                                               return(
                                                  <tr>
                                             <td>{index+1}</td>
-                                            <td><img class="img-fluid" width="100" src={imagePath+items.image} /></td>
+                                            <td><img class="img-fluid" width="100" src={items.image} /></td>
                                             <td>{items.name}</td>
                                             <td>{items.designation}</td>
                                             <td><a href={`/team/edit/${items._id}`} class="btn btn-sm btn-primary me-2">Edit</a><button onClick={()=>handleDelete(items._id)} class="btn btn-sm btn-danger">Delete</button></td>

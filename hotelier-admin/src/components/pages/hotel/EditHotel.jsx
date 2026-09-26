@@ -11,7 +11,7 @@ export default function EditHotel() {
     const navigate = useNavigate();
 
     let [hotelData, setHotelData] = useState();
-    let [imagepath, setimagepath] = useState('');
+  
 
     useEffect(() => {
       if(id){
@@ -19,8 +19,7 @@ export default function EditHotel() {
             .then((result) => {
                     if (result.data._status == true) {
                         setHotelData(result.data._data);
-                        setimagepath(result.data._hotel_setting_image_path);
-                       
+                     
                     } else {
                         toast.error(result.data._message);
                     }
@@ -136,7 +135,7 @@ export default function EditHotel() {
                       className="form-control"
                      
                     />
-                    {imagepath && <img src={imagepath + hotelData?.image} className="img-fluid w-50 mt-2" />}
+                    {hotelData?.image && <img src={hotelData.image} className="img-fluid w-50 mt-2" />}
                   </div>
 
                   {/* Gallery Images */}
@@ -156,7 +155,7 @@ export default function EditHotel() {
                       <div className="row">
                         {hotelData.images.map((img, index) => (
                           <div className="col-md-3 mb-2" key={index}>
-                            <img src={imagepath + img} className="img-fluid" alt={`Gallery ${index}`} />
+                            <img src={img} className="img-fluid" alt={`Gallery ${index}`} />
                           </div>
                         ))}
                       </div>

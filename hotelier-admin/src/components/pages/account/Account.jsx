@@ -6,8 +6,7 @@ import { toast } from 'react-toastify';
 export default function Account() {
 
     let [user,setuser]=useState();
-    let [imagePath,setimagePath]=useState();
-
+  
       let [UpdateStatus, setUpdateStatus] = useState(false);
 
     let [profileDetails, setprofileDetails] = useState('');
@@ -47,10 +46,10 @@ export default function Account() {
         .then((result)=>{
             if(result.data._status==true){
                 setuser(result.data._data);
-                setimagePath(result.data._user_image_path);
+          
             }else{
                 setuser('');
-                setimagePath('');
+              
             }
         }).catch((error)=>{
             console.log(error);
@@ -126,7 +125,7 @@ export default function Account() {
                                    
                               <tr>
                                  <td>{index+1}</td>
-                                 <td><img alt="user" width="50" height="50" class="rounded-circle" src={imagePath+items?.image} /></td>
+                                 <td><img alt="user" width="50" height="50" class="rounded-circle" src={items?.image} /></td>
                                  <td>{items.name}</td>
                                  <td>{items.email}</td>
                                  <td>{items.mobile_number}</td>
@@ -148,7 +147,7 @@ export default function Account() {
       <div class="col-lg-4 mb-4">
          <div class="tm-bg-primary-dark tm-block text-center">
             <h2 class="tm-block-title">Change Avatar</h2>
-            <div class="mb-3 position-relative"><img alt="Avatar" class="img-fluid rounded mb-3" src={imagePath+profileDetails?.image}/></div>
+            <div class="mb-3 position-relative"><img alt="Avatar" class="img-fluid rounded mb-3" src={profileDetails?.image}/></div>
             <input class="form-control" type="file" name="image"/>
          </div>
       </div>

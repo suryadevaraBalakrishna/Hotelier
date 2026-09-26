@@ -24,10 +24,7 @@ export default function page() {
 
    let [hotelDetail, sethotelDetail] = useState([]);
    let [roomDetail, setroomDetail] = useState([]);
-   let [imagePath, setimagePath] = useState([]);
-   let [roomimagePath, setroomimagePath] = useState([]);
-
-
+ 
 
    useEffect(() => {
       axios.post(process.env.NEXT_PUBLIC_API_URL + process.env.NEXT_PUBLIC_WEBSITE_HOTEL_DETAIL, {
@@ -37,14 +34,13 @@ export default function page() {
             if (result.data._status == true) {
                sethotelDetail(result.data._data.hotel);
                setroomDetail(result.data._data.rooms);
-               setimagePath(result.data._hotel_setting_image_path);
-               setroomimagePath(result.data._room_setting_image_path);
+              
 
             } else {
                sethotelDetail();
-               setimagePath();
+             
                setroomDetail();
-               setroomimagePath();
+             
             }
          }).catch((error) => {
             console.log(error);
@@ -74,7 +70,7 @@ export default function page() {
                         <img
                            className="img-fluid rounded"
                            alt="Web Development"
-                           src={imagePath + hotelDetail.image}
+                           src={ hotelDetail.image}
                         />
                      ) : (
                         <p></p>
@@ -120,7 +116,7 @@ export default function page() {
                                  return (
                                     <img
                                        className="img-fluid"
-                                       src={roomimagePath + items}
+                                       src={room.image}
                                        alt={room.name}
                                     />
                                  )

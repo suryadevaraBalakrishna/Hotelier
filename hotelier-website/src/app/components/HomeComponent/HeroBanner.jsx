@@ -6,8 +6,7 @@ import Slider from 'react-slick';
 
 export default function HeroBanner() {
     const [sliderData, setSliderData] = useState([]);
-    const [imagePath, setImagePath] = useState('');
-
+   
     useEffect(() => {
         axios
             .post(
@@ -17,10 +16,10 @@ export default function HeroBanner() {
             .then((result) => {
                 if (result.data._status === true) {
                     setSliderData(result.data._data);
-                    setImagePath(result.data._slider_image_path);
+                  
                 } else {
                     setSliderData([]);
-                    setImagePath('');
+                   
                 }
             })
             .catch((error) => {
@@ -45,7 +44,7 @@ export default function HeroBanner() {
                     <div className="carousel-item active">
                         <img
                             className="w-100"
-                            src={`${imagePath}/${item.image}`}
+                            src={`${item.image}`}
                             alt={item.slider_title}
                         />
 

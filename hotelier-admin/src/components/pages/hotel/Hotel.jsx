@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 
 export default function Hotel() {
     let [Hotels,setHotels] = useState([])
-    let [HotelImage,setHotelImage] = useState('')
+   
     let [HotelLoading,setHotelLoading] = useState(false);
 
     useEffect(()=>{
@@ -13,7 +13,7 @@ export default function Hotel() {
        .then((result)=>{
         if(result.data._status==true){
             setHotels(result.data._data);
-            setHotelImage(result.data._hotel_setting_image_path);
+           
         }else{
             toast.error(result.data._message)
             setHotelImage();
@@ -103,7 +103,7 @@ export default function Hotel() {
                                 <td>
                                     <img
                                         className="img-fluid w-50"
-                                        src={HotelImage + hotel.image}
+                                        src={hotel.image}
                                         alt="Product Image"
                                     />
                                 </td>

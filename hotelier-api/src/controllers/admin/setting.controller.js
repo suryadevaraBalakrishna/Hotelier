@@ -1,54 +1,104 @@
 const settingModal = require("../../models/Setting");
+const cloudinary = require("../../../config/cloudinary");
 require('dotenv').config();
 
-exports.create=async(request,response)=>{
-    try{
-        const data={
-            logo:request.file.filename,
-            sitename:request.body.sitename,
-            email:request.body.email,
-            phone:request.body.phone,
-            social_links:request.body.social_links,
-            address:request.body.address
+
+// exports.create=async(request,response)=>{
+//     try{
+//         const data={
+//             logo:request.file.filename,
+//             sitename:request.body.sitename,
+//             email:request.body.email,
+//             phone:request.body.phone,
+//             social_links:request.body.social_links,
+//             address:request.body.address
+//         }
+
+//         const setting=new settingModal(data);
+//         await setting.save()
+//         .then((result)=>{
+//               const output = {
+//                     _status: true,
+//                     _message: "Record inserted successfully",
+//                     _data: result,
+//                 }
+
+//                 response.send(output);
+//         }).catch((error)=>{
+//                var errorMessage = [];
+//                 for (err in error.errors) {
+//                     errorMessage.push(error.errors[err].message);
+//                 }
+//                 const output = {
+//                     _status: false,
+//                     _message: "Record not inserted",
+//                     _error: errorMessage,
+//                     _data: null,
+//                 }
+//                 response.send(output);
+//         })
+
+
+
+//     }catch(error){
+//         const output = {
+//             _status: false,
+//             _message: "Something went wrong",
+//             _error: error.message,
+//             _data: null,
+//         }
+
+//         response.send(output);
+//     }
+// }
+
+exports.create = async (request, response) => {
+    try {
+
+        let logoUrl = "";
+
+        if (request.file) {
+
+            const result = await cloudinary.uploader.upload(
+                request.file.path,
+                {
+                    folder: "hotelier/settings"
+                }
+            );
+
+            logoUrl = result.secure_url;
         }
 
-        const setting=new settingModal(data);
-        await setting.save()
-        .then((result)=>{
-              const output = {
-                    _status: true,
-                    _message: "Record inserted successfully",
-                    _data: result,
-                }
-
-                response.send(output);
-        }).catch((error)=>{
-               var errorMessage = [];
-                for (err in error.errors) {
-                    errorMessage.push(error.errors[err].message);
-                }
-                const output = {
-                    _status: false,
-                    _message: "Record not inserted",
-                    _error: errorMessage,
-                    _data: null,
-                }
-                response.send(output);
-        })
+        const data = {
+            logo: logoUrl,
+            sitename: request.body.sitename,
+            email: request.body.email,
+            phone: request.body.phone,
+            social_links: request.body.social_links,
+            address: request.body.address
+        };
 
 
+        const setting = new settingModal(data);
 
-    }catch(error){
-        const output = {
+        const result = await setting.save();
+
+        response.send({
+            _status: true,
+            _message: "Record inserted successfully",
+            _data: result,
+        });
+
+    } catch (error) {
+
+        response.send({
             _status: false,
             _message: "Something went wrong",
             _error: error.message,
             _data: null,
-        }
-
-        response.send(output);
+        });
     }
-}
+};
 
 exports.view = async (request, response) => {
     try {
@@ -87,6 +137,49 @@ exports.view = async (request, response) => {
 }
 
 
+// exports.update = async (request, response) => {
+//     try {
+
+//         const setting = await settingModal.findOne();
+
+//         if (!setting) {
+//             return response.send({
+//                 _status: false,
+//                 _message: "Settings not found",
+//                 _data: null
+//             });
+//         }
+
+//         // Update fields
+//          setting.sitename=request.body.sitename,
+//              setting.email=request.body.email,
+//             setting.phone=request.body.phone,
+//             setting.address=request.body.address,
+//           setting.social_links = JSON.parse(request.body.social_links);
+            
+//         if (request.file) {
+//             setting.logo = request.file.filename;
+//         }
+
+//         await setting.save();
+
+//         response.send({
+//             _status: true,
+//             _message: "Record updated successfully",
+//             _data: setting
+//         });
+
+//     } catch (error) {
+//         response.send({
+//             _status: false,
+//             _message: "Something went wrong",
+//             _error: error.message,
+//             _data: null
+//         });
+//     }
+// };
+
+
 exports.update = async (request, response) => {
     try {
 
@@ -100,16 +193,27 @@ exports.update = async (request, response) => {
             });
         }
 
-        // Update fields
-         setting.sitename=request.body.sitename,
-             setting.email=request.body.email,
-            setting.phone=request.body.phone,
-            setting.address=request.body.address,
-          setting.social_links = JSON.parse(request.body.social_links);
-            
+
+        setting.sitename = request.body.sitename;
+        setting.email = request.body.email;
+        setting.phone = request.body.phone;
+        setting.address = request.body.address;
+        setting.social_links = JSON.parse(request.body.social_links);
+
+
+        // Upload new logo to Cloudinary
         if (request.file) {
-            setting.logo = request.file.filename;
+
+            const result = await cloudinary.uploader.upload(
+                request.file.path,
+                {
+                    folder: "hotelier/settings"
+                }
+            );
+
+            setting.logo = result.secure_url;
         }
+
 
         await setting.save();
 
@@ -120,6 +224,7 @@ exports.update = async (request, response) => {
         });
 
     } catch (error) {
+
         response.send({
             _status: false,
             _message: "Something went wrong",
@@ -128,4 +233,3 @@ exports.update = async (request, response) => {
         });
     }
 };
-

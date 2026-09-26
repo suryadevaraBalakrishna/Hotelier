@@ -30,8 +30,7 @@ function Counter({ target }) {
 
 export default function About() {
   const [aboutData, setAboutData] = useState(null);
-  const [imageUrl, setImageUrl] = useState('');
-
+ 
   useEffect(() => {
     axios
       .post(
@@ -41,7 +40,7 @@ export default function About() {
       .then((result) => {
         if (result.data._status === true) {
           setAboutData(result.data._data);
-          setImageUrl(result.data._about_setting_image_path);
+         
         }
       })
       .catch((error) => {
@@ -119,7 +118,7 @@ export default function About() {
           <div className="col-lg-6">
             <img
               className="w-100 rounded"
-              src={`${imageUrl}/${aboutData.image}`}
+              src={`${aboutData.image}`}
               alt={aboutData.heading}
             />
           </div>

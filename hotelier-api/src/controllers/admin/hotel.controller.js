@@ -1,59 +1,122 @@
 const hotelModal = require('../../models/Hotel');
+const cloudinary = require("../../../config/cloudinary");
 require('dotenv').config();
+
+// exports.create = async (request, response) => {
+//     try {
+//          const data = request.body;
+
+     
+//            if (request.files && request.files.image) {
+//             data.image = request.files.image[0].filename;
+//         }
+
+//         if (request.files && request.files.images) {
+//             data.images = request.files.images.map(file => file.filename);
+//         }
+
+
+
+//         const hotel = new hotelModal(data);
+//         await hotel.save()
+//             .then((result) => {
+//                 const output = {
+//                     _status: true,
+//                     _message: "Record inserted successfully",
+//                     _data: result,
+//                 }
+
+//                 response.send(output);
+
+//             }).catch((error) => {
+//                 var errorMessage = [];
+//                 for (err in error.errors) {
+//                     errorMessage.push(error.errors[err].message);
+//                 }
+//                 const output = {
+//                     _status: false,
+//                     _message: "Record not inserted",
+//                     _error: errorMessage,
+//                     _data: null,
+//                 }
+//                 response.send(output);
+//             })
+
+
+//     }
+//     catch (error) {
+//         const output = {
+//             _status: false,
+//             _message: "Something went wrong",
+//             _error: error.message,
+//             _data: null,
+//         }
+
+//         response.send(output);
+//     }
+// }
 
 exports.create = async (request, response) => {
     try {
-         const data = request.body;
+        const data = request.body;
 
-     
-           if (request.files && request.files.image) {
-            data.image = request.files.image[0].filename;
+        // Upload main image to Cloudinary
+        if (request.files && request.files.image) {
+
+            const result = await cloudinary.uploader.upload(
+                request.files.image[0].path,
+                {
+                    folder: "hotelier/hotels"
+                }
+            );
+
+            data.image = result.secure_url;
         }
 
+        // Upload multiple images to Cloudinary
         if (request.files && request.files.images) {
-            data.images = request.files.images.map(file => file.filename);
+
+            const imageUrls = [];
+
+            for (const file of request.files.images) {
+
+                const result = await cloudinary.uploader.upload(
+                    file.path,
+                    {
+                        folder: "hotelier/hotels"
+                    }
+                );
+
+                imageUrls.push(result.secure_url);
+            }
+
+            data.images = imageUrls;
         }
-
-
 
         const hotel = new hotelModal(data);
-        await hotel.save()
-            .then((result) => {
-                const output = {
-                    _status: true,
-                    _message: "Record inserted successfully",
-                    _data: result,
-                }
 
-                response.send(output);
+        const result = await hotel.save();
 
-            }).catch((error) => {
-                var errorMessage = [];
-                for (err in error.errors) {
-                    errorMessage.push(error.errors[err].message);
-                }
-                const output = {
-                    _status: false,
-                    _message: "Record not inserted",
-                    _error: errorMessage,
-                    _data: null,
-                }
-                response.send(output);
-            })
+        const output = {
+            _status: true,
+            _message: "Record inserted successfully",
+            _data: result,
+        };
 
+        response.send(output);
 
-    }
-    catch (error) {
+    } catch (error) {
+
         const output = {
             _status: false,
             _message: "Something went wrong",
             _error: error.message,
             _data: null,
-        }
+        };
 
         response.send(output);
     }
-}
+};
 
 
 exports.view = async (request, response) => {
@@ -88,6 +151,69 @@ exports.view = async (request, response) => {
     }
 }
 
+// exports.update = async (request, response) => {
+//     try {
+
+//         const data = {
+//             name: request.body.name,
+//             slug: request.body.slug,
+//             description: request.body.description,
+//             location: request.body.location,
+//             order: request.body.order,
+//             status: request.body.status
+//         }
+
+      
+//            if (request.files && request.files.image) {
+//             data.image = request.files.image[0].filename;
+//         }
+
+//         if (request.files && request.files.images) {
+//             data.images = request.files.images.map(file => file.filename);
+//         }
+
+
+
+//         await hotelModal.updateOne(
+//             { _id: request.params.id }, {
+//             $set: data
+//         }
+//         ).then((result) => {
+//             const output = {
+//                 _status: true,
+//                 _message: 'Record Updated',
+//                 _data: result
+//             }
+
+//             response.send(output);
+//         })
+//             .catch((error) => {
+//                 const output = {
+//                     _status: false,
+//                     _message: 'Record not Updated',
+//                     _error: error.message,
+//                     _data: null
+//                 }
+//                 response.send(output);
+//             })
+
+
+
+//     }
+//     catch (error) {
+//         const output = {
+//             _status: false,
+//             _message: "Something went wrong",
+//             _error: error.message,
+//             _data: null
+//         }
+//         response.send(output);
+//     }
+// }
+
+
+
+
 exports.update = async (request, response) => {
     try {
 
@@ -98,55 +224,73 @@ exports.update = async (request, response) => {
             location: request.body.location,
             order: request.body.order,
             status: request.body.status
+        };
+
+
+        // Update main image
+        if (request.files && request.files.image) {
+
+            const result = await cloudinary.uploader.upload(
+                request.files.image[0].path,
+                {
+                    folder: "hotelier/hotels"
+                }
+            );
+
+            data.image = result.secure_url;
         }
 
-      
-           if (request.files && request.files.image) {
-            data.image = request.files.image[0].filename;
-        }
 
+        // Update gallery images
         if (request.files && request.files.images) {
-            data.images = request.files.images.map(file => file.filename);
-        }
 
+            const imageUrls = [];
 
+            for (const file of request.files.images) {
 
-        await hotelModal.updateOne(
-            { _id: request.params.id }, {
-            $set: data
-        }
-        ).then((result) => {
-            const output = {
-                _status: true,
-                _message: 'Record Updated',
-                _data: result
+                const result = await cloudinary.uploader.upload(
+                    file.path,
+                    {
+                        folder: "hotelier/hotels"
+                    }
+                );
+
+                imageUrls.push(result.secure_url);
             }
 
-            response.send(output);
-        })
-            .catch((error) => {
-                const output = {
-                    _status: false,
-                    _message: 'Record not Updated',
-                    _error: error.message,
-                    _data: null
-                }
-                response.send(output);
-            })
+            data.images = imageUrls;
+        }
 
 
+        const result = await hotelModal.updateOne(
+            { _id: request.params.id },
+            {
+                $set: data
+            }
+        );
 
-    }
-    catch (error) {
+
+        const output = {
+            _status: true,
+            _message: "Record Updated",
+            _data: result
+        };
+
+        response.send(output);
+
+
+    } catch (error) {
+
         const output = {
             _status: false,
             _message: "Something went wrong",
             _error: error.message,
             _data: null
-        }
+        };
+
         response.send(output);
     }
-}
+};
 
 
 exports.details = async (request, response) => {

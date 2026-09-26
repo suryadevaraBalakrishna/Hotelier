@@ -10,15 +10,14 @@ export default function EditRoom() {
   const id = params.id;
 
   let [RoomDetail, setRoomDetail] = useState([]);
-  let [imagePath, setImagePath] = useState('');
-
+ 
   useEffect(()=>{
      if(id){
         axios.post(import.meta.env.VITE_ADMIN_URL+import.meta.env.VITE_API_ROOM_DETAIL,{id:id})
         .then((result)=>{
            if(result.data._status==true){
               setRoomDetail(result.data._data);
-              setImagePath(result.data._room_setting_image_path);
+              
            }else{
             toast.error(result.data._message)
            }
@@ -197,7 +196,7 @@ export default function EditRoom() {
 
                   {/* Cover Image */}
                   <div className="form-group mb-3">
-                    <img src={imagePath+RoomDetail.image} className="img-fluid w-25 mb-3" />
+                    <img src={RoomDetail.image} className="img-fluid w-25 mb-3" />
                     <div>
                     <label htmlFor="image">Cover Image</label>
                     <input
@@ -214,7 +213,7 @@ export default function EditRoom() {
                   <div className="form-group mb-4">
                     {RoomDetail.images && RoomDetail.images.map((img, index) => {
                       return (
-                        <img src={imagePath+img} className="img-fluid w-25 mb-3 mx-2" key={index} />
+                        <img src={img} className="img-fluid w-25 mb-3 mx-2" key={index} />
                       )
                     })}
                     <div>

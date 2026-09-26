@@ -12,8 +12,7 @@ import { toast } from 'react-toastify';
 export default function page() {
 
     let [userData, setuserData] = useState({});
-    let [imagePath, setimagePath] = useState('');
-
+   
     let [bookings, setBookings] = useState([]);
 
     let [formSubmit, setformSubmit] = useState(false);
@@ -42,7 +41,7 @@ export default function page() {
         }).then((result) => {
             if (result.data._status == true) {
                 setuserData(result.data._data);
-                setimagePath(result.data._user_image_path);
+               
             } else {
                 console.log(result.data._message);
             }
@@ -317,7 +316,7 @@ export default function page() {
                                             <div className="mb-3"><label className="form-label">Phone Number</label><input className="form-control" placeholder="Enter phone number" type="text" name="mobile_number" defaultValue={userData.mobile_number} /></div>
                                             <div className="mb-3">
                                                 <label className="form-label">Image</label>
-                                                <div><img className="img-fluid" src={imagePath + userData.image} /></div>
+                                                <div><img className="img-fluid" src={userData.image} /></div>
                                                 <input className="form-control" placeholder="Enter phone number" type="file" name="image" />
                                             </div>
                                             <button className="btn btn-primary" type="submit">Update Profile</button>

@@ -23,7 +23,7 @@ export default function Header() {
 
 
     const [setting, setsetting] = useState();
-    const [logopath, setlogopath] = useState();
+    
     const [menu, setmenu] = useState([]);
 
 
@@ -61,9 +61,6 @@ export default function Header() {
 
                     setsetting(result.data._data);
 
-                    setlogopath(
-                        result.data._setting_image_path
-                    );
 
                 } else {
 
@@ -131,7 +128,7 @@ export default function Header() {
                             {setting && setting.logo ? (
 
                                 <img
-                                    src={logopath + setting.logo}
+                                    src={setting.logo}
                                     alt="Logo"
                                     className="img-fluid me-2"
                                     style={{

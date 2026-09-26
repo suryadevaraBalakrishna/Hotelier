@@ -4,17 +4,16 @@ import { toast } from 'react-toastify';
 
 export default function About() {
  let [about, setAbout] = useState();
- let [imagePath,setimagePath] = useState();
 
  useEffect(()=>{
   axios.post(import.meta.env.VITE_ADMIN_URL + import.meta.env.VITE_API_ABOUT_VIEW)
   .then((result)=>{
    if(result.data._status==true){
        setAbout(result.data._data);
-       setimagePath(result.data._about_setting_image_path);
+       
    }else{
     setAbout(null);
-    setimagePath(null);
+   
    }
   }).catch((error)=>{
    console.log(error);
@@ -67,7 +66,7 @@ export default function About() {
             <div className="mb-3"><label className="form-label">Button Link</label><input className="form-control" type="text" name="button_link" defaultValue={about?.button_link}/></div>
             <div className="mb-3">
                <label className="form-label">image</label><input className="form-control" type="file" name="image"/>
-               <div className="mt-3"><img alt="Logo" className="img-thumbnail" src={imagePath + about?.image} style={{height: '80px'}}/></div>
+               <div className="mt-3"><img alt="Logo" className="img-thumbnail" src={about?.image} style={{height: '80px'}}/></div>
             </div>
             <div className="text-end"><button type="submit" className="btn btn-success"><i className="fas fa-save me-2"></i>Update</button></div>
          </form>

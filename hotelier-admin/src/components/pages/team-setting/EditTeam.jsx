@@ -9,8 +9,7 @@ export default function EditTeam() {
 
       const params = useParams();
     const id = params.id;
-    const [imagepath, setimagepath] = useState('');
-
+  
         const navigate=useNavigate();
 
        useEffect(() => {
@@ -19,7 +18,7 @@ export default function EditTeam() {
                 .then((result) => {
                     if (result.data._status == true) {
                         setTeam(result.data._data);
-                        setimagepath(result.data._team_setting_image_path);
+                       
                     } else {
                         toast.error(result.data._message);
                     }
@@ -83,7 +82,7 @@ export default function EditTeam() {
                                 <div className="mb-3">
                                     <label className="form-label"> Image</label>
                                     <input type="file" className="form-control" name='image' />
-                                    <img className='img-fluid' src={imagepath+Team?.image}/>
+                                    <img className='img-fluid' src={Team?.image}/>
                                 </div>
 
                                 <div className="text-end">

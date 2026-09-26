@@ -4,7 +4,7 @@ import axios from 'axios'
 
 export default function AddSlider() {
   let [viewSlider,setviewSlider]=useState([])
-  let [sliderImage,setsliderImage]=useState()
+  
   let [createStatus,setcreateStatus]=useState(false)
   let [deleteStatus,setdeleteStatus]=useState(false)
 
@@ -14,10 +14,10 @@ export default function AddSlider() {
       if(result.data._status==true){
          setviewSlider(result.data._data);
          console.log(result.data._data);
-         setsliderImage(result.data._slider_image_path);
+        
       }else{
          setviewSlider()
-         setsliderImage()
+       
       }
    }).catch((error)=>{
       console.log(error)
@@ -121,7 +121,7 @@ let handleDelete=(id)=>{
                            return(
                               <tr key={index}>
                                  <td>{index+1}</td>
-                                 <td><img src={sliderImage+items.image} className="img-fluid" width="100"/></td>
+                                 <td><img src={items.image} className="img-fluid" width="100"/></td>
                                  <td>{items.heading}</td>
                                  <td>{items.button_txt}</td>
                                  <td><a href={`/slider/edit/${items._id}`} className="btn btn-sm btn-primary me-2">Edit</a><button onClick={()=>handleDelete(items._id)} className="btn btn-sm btn-danger">Delete</button></td>
