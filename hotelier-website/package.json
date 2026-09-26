@@ -1,0 +1,30 @@
+{
+  "name": "hotelier-website",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.2.0",
+    "@reduxjs/toolkit": "^2.12.0",
+    "axios": "^1.16.1",
+    "bootstrap": "^5.3.8",
+    "js-cookie": "^3.0.8",
+    "next": "16.2.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-razorpay": "^3.0.1",
+    "react-redux": "^9.3.0",
+    "react-slick": "^0.31.0",
+    "react-toastify": "^11.1.0",
+    "slick-carousel": "^1.8.1"
+  },
+  "devDependencies": {
+    "eslint": "^9",
+    "eslint-config-next": "16.2.4"
+  }
+}
