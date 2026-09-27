@@ -1,17 +1,15 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import Breadcrumb from '../components/common/Breadcrumb';
 import axios from 'axios';
 import { useSearchParams } from 'next/navigation';
 import { useRazorpay } from "react-razorpay";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { removeSelectedRoom } from '@/app/slice/bookingSlice';
 
 
-export default function Page() {
-
-
+function CheckoutPage() {
 
     const searchParams = useSearchParams();
 
@@ -24,6 +22,7 @@ export default function Page() {
     const userToken = useSelector((state) => state.login.token);
 
     const dispatch = useDispatch();
+
 
     useEffect(() => {
 
@@ -60,11 +59,12 @@ export default function Page() {
     }, [booking_id]);
 
 
-
     const createPaymentOrder = async () => {
 
         if (!booking_id) {
+
             alert("Booking ID not found");
+
             return;
         }
 
@@ -85,13 +85,16 @@ export default function Page() {
 
             console.log("Payment Response:", result.data);
 
+
             if (result.data._status === true) {
 
                 const orderInfo = result.data.orderInfo;
 
                 console.log("Razorpay Order:", orderInfo);
 
+
                 const options = {
+
                     key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
 
                     amount: orderInfo.amount,
@@ -103,6 +106,7 @@ export default function Page() {
                     description: "Hotel Room Booking",
 
                     order_id: orderInfo.id,
+
 
                     handler: async function (response) {
 
@@ -121,13 +125,20 @@ export default function Page() {
                                 }
                             );
 
-                            console.log("Payment Verification:", verifyResult.data);
+
+                            console.log(
+                                "Payment Verification:",
+                                verifyResult.data
+                            );
+
 
                             if (verifyResult.data._status === true) {
 
-                                    dispatch(removeSelectedRoom());
+                                dispatch(removeSelectedRoom());
 
-                                alert("Payment Successful! Booking Confirmed.");
+                                alert(
+                                    "Payment Successful! Booking Confirmed."
+                                );
 
                                 console.log(
                                     "Booking Status:",
@@ -136,32 +147,50 @@ export default function Page() {
 
                             } else {
 
-                                alert(verifyResult.data._message);
+                                alert(
+                                    verifyResult.data._message
+                                );
 
                             }
 
                         } catch (error) {
 
-                            console.log("Payment Verification Error:", error);
+                            console.log(
+                                "Payment Verification Error:",
+                                error
+                            );
 
-                            alert("Payment verification failed.");
+                            alert(
+                                "Payment verification failed."
+                            );
 
                         }
 
                     },
 
+
                     prefill: {
+
                         name: bookingData.guest_name,
+
                         email: bookingData.email,
+
                         contact: bookingData.mobile_number
+
                     },
 
+
                     theme: {
+
                         color: "#0d6efd"
+
                     }
+
                 };
 
+
                 const razorpayInstance = new Razorpay(options);
+
 
                 razorpayInstance.on(
                     "payment.failed",
@@ -173,16 +202,20 @@ export default function Page() {
                         );
 
                         alert("Payment Failed!");
+
                     }
                 );
 
+
                 razorpayInstance.open();
+
 
             } else {
 
                 alert(result.data._message);
 
             }
+
 
         } catch (error) {
 
@@ -191,18 +224,23 @@ export default function Page() {
             alert("Something went wrong");
 
         }
+
     };
 
 
     return (
+
         <>
+
             <Breadcrumb title="Checkout" />
+
 
             <div className="container py-5">
 
                 <h2 className="mb-4">
                     Checkout
                 </h2>
+
 
                 {bookingData ? (
 
@@ -214,22 +252,27 @@ export default function Page() {
                                 Booking Summary
                             </h4>
 
+
                             <p>
                                 <strong>Guest Name:</strong>{" "}
                                 {bookingData.guest_name}
                             </p>
+
 
                             <p>
                                 <strong>Email:</strong>{" "}
                                 {bookingData.email}
                             </p>
 
+
                             <p>
                                 <strong>Mobile:</strong>{" "}
                                 {bookingData.mobile_number}
                             </p>
 
+
                             <hr />
+
 
                             <p>
                                 <strong>Check-in:</strong>{" "}
@@ -238,6 +281,7 @@ export default function Page() {
                                 ).toLocaleDateString()}
                             </p>
 
+
                             <p>
                                 <strong>Check-out:</strong>{" "}
                                 {new Date(
@@ -245,30 +289,37 @@ export default function Page() {
                                 ).toLocaleDateString()}
                             </p>
 
+
                             <p>
                                 <strong>Guests:</strong>{" "}
                                 {bookingData.guests}
                             </p>
 
+
                             <hr />
+
 
                             <p>
                                 <strong>Room Price:</strong>{" "}
                                 ₹{bookingData.room_price} / night
                             </p>
 
+
                             <p>
                                 <strong>Total Nights:</strong>{" "}
                                 {bookingData.total_nights}
                             </p>
 
+
                             <h4 className="mt-3">
                                 Total Amount: ₹{bookingData.total_amount}
                             </h4>
 
+
                             <span className="badge text-start text-dark mt-2 d-block w-25">
                                 Status: {bookingData.status}
                             </span>
+
 
                             <button
                                 type="button"
@@ -277,6 +328,7 @@ export default function Page() {
                             >
                                 Proceed to Payment
                             </button>
+
 
                         </div>
 
@@ -291,6 +343,32 @@ export default function Page() {
                 )}
 
             </div>
+
         </>
+
     );
+
+}
+
+
+export default function Page() {
+
+    return (
+
+        <Suspense
+            fallback={
+                <div className="container py-5">
+                    <div className="alert alert-info">
+                        Loading checkout...
+                    </div>
+                </div>
+            }
+        >
+
+            <CheckoutPage />
+
+        </Suspense>
+
+    );
+
 }
