@@ -17,13 +17,13 @@ export default function Header() {
 
 
 
-    const login=useSelector((state)=>state.login.token);
+    const login = useSelector((state) => state.login.token);
 
-  
+
 
 
     const [setting, setsetting] = useState();
-    
+
     const [menu, setmenu] = useState([]);
 
 
@@ -108,6 +108,10 @@ export default function Header() {
     }, []);
 
 
+    const DEFAULT_LOGO =
+        "https://res.cloudinary.com/uf5y8vtd/image/upload/v1790428601/hotelier/settings/dwhaqen0iudbn2kr4hdb.png";
+
+
     return (
 
         <>
@@ -119,42 +123,21 @@ export default function Header() {
                     {/* DESKTOP LOGO */}
 
                     <div className="col-lg-3 bg-dark d-none d-lg-block">
-
                         <Link
                             href="/"
                             className="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center"
                         >
-
-                            {setting && setting.logo ? (
-
-                                <img
-                                    src={setting.logo}
-                                  
-                                    className="img-fluid me-2"
-                                    style={{
-                                        width: '70%',
-                                        height: 'auto'
-                                    }}
-                                />
-
-                            ) : (
-
-                                <img
-                                    src="/hotel-logo.png"
-                                    alt="Default Logo"
-                                    className="img-fluid me-2"
-                                    style={{
-                                        width: '70%',
-                                        height: 'auto'
-                                    }}
-                                />
-
-                            )}
-
+                            <img
+                                src={setting?.logo || DEFAULT_LOGO}
+                                alt="Hotelier Logo"
+                                className="img-fluid me-2"
+                                style={{
+                                    width: "70%",
+                                    height: "auto"
+                                }}
+                            />
                         </Link>
-
                     </div>
-
 
                     <div className="col-lg-9">
 
@@ -426,7 +409,7 @@ export default function Header() {
                                         className="btn-primary-btn text-white rounded-0 py-4 px-md-2 d-none d-lg-block text-uppercase"
                                     >
 
-                                      {login ? "My Account" : "Register/Login"}
+                                        {login ? "My Account" : "Register/Login"}
 
                                         <i className="fa-solid fa-arrow-right ms-3 text-white"></i>
 
