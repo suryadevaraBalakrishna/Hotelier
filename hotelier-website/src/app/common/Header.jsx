@@ -235,16 +235,15 @@ export default function Header() {
                                     className="navbar-brand m-0"
                                 >
 
-                                    <img
-                                        src="/hotel-logo.png"
-                                        alt="Logo"
-                                        className="img-fluid"
-                                        style={{
-                                            width: "140px",
-                                            height: "auto"
-                                        }}
-                                    />
-
+                                     <img
+                                src={setting?.logo || DEFAULT_LOGO}
+                                alt="Hotelier Logo"
+                                className="img-fluid me-2"
+                                style={{
+                                    width: "70%",
+                                    height: "auto"
+                                }}
+                                 />
                                 </Link>
 
 
