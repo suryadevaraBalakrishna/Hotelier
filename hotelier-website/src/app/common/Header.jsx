@@ -129,7 +129,7 @@ export default function Header() {
 
                                 <img
                                     src={setting.logo}
-                                    alt="Logo"
+                                  
                                     className="img-fluid me-2"
                                     style={{
                                         width: '70%',
